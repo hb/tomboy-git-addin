@@ -1,0 +1,21 @@
+<Addin id="GitAddin"
+    namespace="Tomboy"
+    name="Git Integration"
+    author="Holger Berndt"
+    description="Allows you to drag a treeish object into Tomboy."
+    category="Desktop Integration"
+    defaultEnabled="false"
+    version="0.1">
+
+    <Runtime>
+        <Import assembly="Git.dll" />
+    </Runtime>
+
+    <Dependencies>
+        <Addin id="Tomboy" version="0.10" />
+    </Dependencies>
+
+    <Extension path="/Tomboy/NoteAddins">
+        <NoteAddin type="Tomboy.Git.GitNoteAddin" />
+    </Extension>
+</Addin>

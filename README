@@ -1,0 +1,25 @@
+Git addin for Tomboy
+===========================
+
+This addin provides Git repository viewer integration for Tomboy.
+Currently, it's limited to gitg.
+
+When commits are dragged from the commit view in gitg and dropped
+into a Tomboy note, a git link is created in the note. Clicking the
+link will open the commit again in the repository viewer.
+
+To install the addin for a local user, type
+make && make install
+
+You will need the gmcs compiler and of course Tomboy
+for this to succeed.
+
+Then activate the addin in the Tomboy addin dialog,
+"Desktop Integration" section.
+
+To install system wide, just copy the file Git.dll to the system
+wide addin folder (e.g. /usr/lib/tomboy/addins)
+
+
+------------------------------------------------------------------------
+Copyright 2010 Holger Berndt <berndth@gmx.de>
