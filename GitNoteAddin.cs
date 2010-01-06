@@ -72,10 +72,9 @@ namespace Tomboy.Git
                                            Gtk.TextIter end)
         {
 			Process p = new Process();
-			Logger.Info("Trying to open '{1}' in '{0}'", RepositoryPath, Treeish);
 			p.StartInfo.FileName = "gitg";
-			p.StartInfo.WorkingDirectory = RepositoryPath;
 			p.StartInfo.Arguments = "--select " + Treeish;
+			p.StartInfo.WorkingDirectory = RepositoryPath;
 			p.StartInfo.UseShellExecute = false;
 
 			try {
@@ -169,6 +168,28 @@ namespace Tomboy.Git
             }
         }
         
+        string GetLinkText(string repository_path, string treeish)
+        {
+            string retval = null;
+            Process p = new Process();
+			p.StartInfo.FileName = "git";
+			p.StartInfo.Arguments = "log --oneline " + treeish + "^.." + treeish;
+			p.StartInfo.WorkingDirectory = repository_path;
+			p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+
+            try {
+                p.Start();
+                retval = p.StandardOutput.ReadToEnd().Trim();
+                p.WaitForExit();
+			} catch(Exception ee) {
+				Logger.Error(String.Format("Error running git: {0}", ee.Message));
+			}
+
+            return retval;
+        }
+
         void HandleDrop(int xx, int yy, bool first, string repository_path, string treeish)
         {
             // Place the cursor in the position where the uri was
@@ -198,7 +219,10 @@ namespace Tomboy.Git
             
             cursor = Buffer.GetIterAtMark(Buffer.InsertMark);
             start_offset = cursor.Offset;
-            Buffer.Insert(ref cursor, treeish);
+            string linktext = GetLinkText(repository_path, treeish);
+            if(linktext == null)
+                linktext = treeish;
+            Buffer.Insert(ref cursor, linktext);
             Gtk.TextIter start = Buffer.GetIterAtOffset(start_offset);
             Gtk.TextIter end = Buffer.GetIterAtMark(Buffer.InsertMark);
             Buffer.ApplyTag(link_tag, start, end);
