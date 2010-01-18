@@ -117,12 +117,12 @@ namespace Tomboy.Git
         public override void Shutdown()
         {
             if(HasWindow)
-                TargetList.Remove(Gdk.Atom.Intern("git/treeish-list", false));
+                TargetList.Remove(Gdk.Atom.Intern("x-gitg/treeish-list", false));
         }
 
         public override void OnNoteOpened()
         {
-            TargetList.Add(Gdk.Atom.Intern("git/treeish-list", false), 0, 51);
+            TargetList.Add(Gdk.Atom.Intern("x-gitg/treeish-list", false), 0, 51);
             Window.Editor.DragDataReceived += OnDragDataReceived;
         }
 
@@ -133,23 +133,23 @@ namespace Tomboy.Git
         void OnDragDataReceived(object sender, Gtk.DragDataReceivedArgs args)
         {
             bool stop_emission = false;
-            
+
             if(args.SelectionData.Length < 0)
                 return;
-                        
-            if(args.Info == 1) {
+
+            if(args.Info == 51) {
+                Gtk.Drag.Finish(args.Context, true, false, args.Time);
+                stop_emission = true;
+                HandleDrops(args.X, args.Y, Encoding.UTF8.GetString(args.SelectionData.Data));
+            }
+            else {
                 foreach(Gdk.Atom atom in args.Context.Targets) {
-                    if(atom.Name == "git/treeish-list") {
-                        Gtk.Drag.GetData(Window.Editor, args.Context, Gdk.Atom.Intern("git/treeish-list", false), args.Time);
+                    if(atom.Name == "x-gitg/treeish-list") {
+                        Gtk.Drag.GetData(Window.Editor, args.Context, Gdk.Atom.Intern("x-gitg/treeish-list", false), args.Time);
                         Gdk.Drag.Status(args.Context, Gdk.DragAction.Link, args.Time);
                         stop_emission = true;
                     }
                 }
-            }
-            else if(args.Info == 51) {
-                Gtk.Drag.Finish(args.Context, true, false, args.Time);
-                stop_emission = true;
-                HandleDrops(args.X, args.Y, Encoding.UTF8.GetString(args.SelectionData.Data));
             }
             
             if(stop_emission) 
